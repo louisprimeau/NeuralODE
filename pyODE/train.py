@@ -4,7 +4,7 @@ from derivative import L2div, FCdiv
 from copy import deepcopy
 
 def NeuralNet(image, theta, layers):
-    states = [image]
+    states = [copy.deepcopy(image)]
     for i,layer in enumerate(layers):
         states.append(layer.forward(states[i]))
     return(state)

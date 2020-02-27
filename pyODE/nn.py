@@ -1,4 +1,4 @@
-sssimport numpy as np
+import numpy as np
 from mult import mult
 from adj import adjsensitivity
 
@@ -9,7 +9,7 @@ The convolution function
 :param theta: Convolutional Network Parameters.
 :returns: hl4, the output hiddenlayer of the stacked convolutions.
 """
-def convolution(image, theta):
+def convolution(image, t, theta):
     hl1 = nn.conv(image,theta[0])
     hl2 = nn.conv(image,theta[1])
     hl3 = nn.conv(image,theta[2])
@@ -27,7 +27,7 @@ class ConvRKIntegrator:
         self.params = theta.flatten()
         self.t = t
     def forward(self, image):
-        return(KIntegrator(convolution(image, self.params), self.t, image, self.params))
+        return(KIntegrator(convolution(image, t, self.params), self.t, image, self.params))
     def div(self, output, outputdiv):
         return(adjsensitivity(convolution, self.params, t[0], t[len(t) - 2], output), previous)
 
