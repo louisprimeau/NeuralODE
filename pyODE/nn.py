@@ -46,7 +46,7 @@ class ConvRKIntegrator:
     def forward(self, image):
         return(RKIntegrator(StackedResidualBlock, self.t, image, self.params))
     def div(self, output, outputdiv):
-        return(adjsensitivity(StackedResidualBlock, self.params.flatten(), self.t[0], output, mult(output.reshape(1,output.size), outputdiv)))
+        return(adjsensitivity(StackedResidualBlock, self.params.flatten(), self.t[::-1], output, outputdiv))
 
 class FullyConnected:
     def __init__(self, W, b):
@@ -57,7 +57,7 @@ class FullyConnected:
         return(mult(image.reshape((1, image.size)), self.params[0:self.Wsize].reshape(self.Wshape)) + self.params[self.Wsize:self.params.size])
     def div(self, output, outputdiv):
         print("FCdiv:", outputdiv)
-        return(outputdiv * self.params[0:self.Wsize][:, np.newaxis].reshape(self.Wshape), outputdiv.reshape(self.bshape))
+        return(mult(self.params[0:self.Wsize][:, np.newaxis].reshape(self.Wshape), outputdiv.transpose()).reshape((28,28)))
 
 class Conv:
     def __init__(self, kernel):

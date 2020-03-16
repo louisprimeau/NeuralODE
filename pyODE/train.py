@@ -1,6 +1,6 @@
 import nn
 from copy import deepcopy
-import  os
+import os
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
