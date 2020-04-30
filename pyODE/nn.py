@@ -22,12 +22,37 @@ def StackedResidualBlock(image, t, theta):
     hl6 = conv.forward(relu(conv.forward(hl5, kernel=theta[10])), kernel=theta[11]) + hl5
     return(hl6)
 
-def relu(A):
-    return(np.maximum(A,0))
+def toyf(image, t, theta):
+    conv = Conv(None)
+    hl1 = conv.forward(image,kernel=theta[0])
+    hl2 = relu(hl1)
+    hl3 = conv.forward(image,kernel=theta[0])
+    return(hl3)
+
+
+"""
+class StackedResidualBlock:
+    def forward(self,A):
+         conv = Conv(None)
+         theta = theta.reshape(12,3,3)
+         self.hl1 = conv.forward(relu(conv.forward(image, kernel=theta[0])), kernel=theta[1]) + image
+         self.hl2 = conv.forward(relu(conv.forward(hl1, kernel=theta[2])), kernel=theta[3]) + hl1
+         self.hl3 = conv.forward(relu(conv.forward(hl2, kernel=theta[4])), kernel=theta[5]) + hl2
+         self.hl4 = conv.forward(relu(conv.forward(hl3, kernel=theta[6])), kernel=theta[7]) + hl3
+         self.hl5 = conv.forward(relu(conv.forward(hl4, kernel=theta[8])), kernel=theta[9]) + hl4
+         self.hl6 = conv.forward(relu(conv.forward(hl5, kernel=theta[10])), kernel=theta[11]) + hl5
+         return(hl6)
+     def div(self,output,outputdiv):
+         raise NotImplementedError
+"""  
+class Relu(A):
+    def forward(self,A):
+        return(np.maximum(A,0))
+    def div(self,output,outputdiv):
+        return(np.heaviside(output, 0))
 
 def L2(x, label):
     return(np.square(x - label))
-
 
 """
 class L2:
@@ -44,9 +69,9 @@ class ConvRKIntegrator:
         self.params = theta
         self.t = t
     def forward(self, image):
-        return(RKIntegrator(StackedResidualBlock, self.t, image, self.params))
+        return(RKIntegrator(Conv, self.t, image, self.params))
     def div(self, output, outputdiv):
-        return(adjsensitivity(StackedResidualBlock, self.params.flatten(), self.t[::-1], output, outputdiv))
+        return(adjsensitivity(Conv, self.params.flatten(), self.t[::-1], output, outputdiv))
 
 class FullyConnected:
     def __init__(self, W, b):
@@ -85,4 +110,4 @@ class Conv:
             unraveled[:,i] = A[0:3,i:i+3].flatten()
         return unraveled
     def div(self, output, outputdiv):
-        raise NotImplementedError
+        return(self.forward(image, stride=1, padding=0, kernel=output))
